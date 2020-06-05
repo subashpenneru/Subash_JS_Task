@@ -17,6 +17,7 @@ const formCtrl = (function() {
     var current_page = 1;
     var totalPages = Math.ceil(userArr.length / per_page);
     var edit_form = false;
+    var selectedRowPage = 0;
 
     var mainTable = document.querySelector('.main-table');
 
@@ -103,16 +104,19 @@ const formCtrl = (function() {
         }
         let tr = document.createElement('tr');
         let td = document.createElement('td');
-        let checkbox = `<input type="checkbox" class="check" onchange="formCtrl.onChangeCheck(${i})" />`
+        let checkbox = `<input type="checkbox" class="check" onchange="formCtrl.onChangeCheck(${i}, ${current_page})" />`
         tr.appendChild(td);
         
         return `<tr><td>${checkbox}${rowData}</td></tr>`;
     }
 
-    var changeCheck = function(val) {
+    var changeCheck = function(val, selected) {
+        if(selected) {
+            selectedRowPage = selected;
+        }
+
         let check = document.getElementsByClassName('check');
         let j = check.length;
-        console.log(val, check.length)
 
         for (let i = 0; i < check.length; i++) {
             if(sort === 'asc') {
@@ -128,6 +132,9 @@ const formCtrl = (function() {
                     selectedRow = val - 1;
                 }
             }
+        }
+        if(val > 0 && selectedRowPage === current_page ) {
+            check[val-1].checked = true
         }
     }
 
@@ -184,6 +191,7 @@ const formCtrl = (function() {
             }
         }
         document.getElementsByClassName(`link${val}`)[0].classList.add('disabled');
+        changeCheck(selectedRow + 1)
     }
 
     var setName = function(event) {
